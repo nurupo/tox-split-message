@@ -46,7 +46,7 @@ bool insrease_capacity(size_t *in_out_capacity, uint8_t ***in_out_strings, size_
 
     {
         uint8_t **tmp;
-        tmp = (uint8_t **) realloc(*in_out_strings, capacity * sizeof(*in_out_strings));
+        tmp = realloc(*in_out_strings, capacity * sizeof(*in_out_strings));
         if (!tmp) {
             return false;
         }
@@ -54,7 +54,7 @@ bool insrease_capacity(size_t *in_out_capacity, uint8_t ***in_out_strings, size_
     }
     {
         size_t *tmp;
-        tmp = (size_t *) realloc(*in_out_lengths, capacity * sizeof(*in_out_lengths));
+        tmp = realloc(*in_out_lengths, capacity * sizeof(*in_out_lengths));
         if (!tmp) {
             return false;
         }
@@ -146,12 +146,12 @@ bool tsm_split_message(uint8_t *in_string, size_t in_length, uint8_t ***out_stri
         return false;
     }
 
-    *out_strings = (uint8_t**) malloc(strings_capacity * sizeof(*out_strings));
+    *out_strings = malloc(strings_capacity * sizeof(*out_strings));
     if (!*out_strings) {
         return false;
     }
 
-    *out_lengths = (size_t *) malloc(strings_capacity * sizeof(*out_lengths));
+    *out_lengths = malloc(strings_capacity * sizeof(*out_lengths));
     if (!*out_lengths) {
         free(*out_strings);
         return false;
