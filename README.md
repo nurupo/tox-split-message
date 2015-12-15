@@ -23,7 +23,7 @@ void my_client_send_message(Tox *tox, uint32_t friend_number, uint8_t *message,
         tox_friend_send_message(tox, friend_number, TOX_MESSAGE_TYPE_NORMAL,
                                 messages[i], lengths[i], NULL);
     }
-    
+
     free(messages);
     free(lengths);
 }

@@ -25,48 +25,6 @@
 #include <tox.h>
 
 /**
- * Tries to increase capacity of strings and lengths arrays, by a multiple of the current capacity.
- * @param in_out_capacity Current capacity of strings and lengths arrays, which will get updated.
- * @param in_out_strings Pointer to strings array.
- * @param in_out_lengths Pointer to lengths array.
- * @return true on success, false on failure.
- */
-bool insrease_capacity(size_t *in_out_capacity, uint8_t ***in_out_strings, size_t **in_out_lengths)
-{
-    if (*in_out_capacity == 0) {
-        return false;
-    }
-
-    size_t capacity = ceil(*in_out_capacity * 1.5);
-
-    // check for overflow of capacity, of sorts
-    if (capacity <= *in_out_capacity) {
-        return false;
-    }
-
-    {
-        uint8_t **tmp;
-        tmp = realloc(*in_out_strings, capacity * sizeof(*in_out_strings));
-        if (!tmp) {
-            return false;
-        }
-        *in_out_strings = tmp;
-    }
-    {
-        size_t *tmp;
-        tmp = realloc(*in_out_lengths, capacity * sizeof(*in_out_lengths));
-        if (!tmp) {
-            return false;
-        }
-        *in_out_lengths = tmp;
-    }
-
-    *in_out_capacity = capacity;
-
-    return true;
-}
-
-/**
  * Tries to find split position of a UTF-8 encoded string at a UTF-8 codepoint closest to the provided position.
  * @param in_max_split_position A position at which, or before, we want to split the string.
  * @param in_string UTF-8 encoded string we want to split.
@@ -129,37 +87,14 @@ bool special_split(size_t in_max_split_position, const uint8_t *in_string, size_
     return false;
 }
 
-bool tsm_split_message(uint8_t *in_string, size_t in_length, uint8_t ***out_strings, size_t **out_lengths,
-                  size_t *out_count)
+bool tsm_split_message(const uint8_t *in_string, size_t in_length, tsm_callback *callback, void *user_data)
 {
-    if (!in_string || in_length == 0 || !out_strings || !out_lengths || !out_count) {
+    if (!in_string || in_length == 0 || !callback) {
         return false;
     }
 
-    // the least number of splitted strings we will get (i.e. splitting strings exactly at TOX_MAX_MESSAGE_LENGTH)
-    // * 1.5, to reduce number of reallocations. if we actually need more than that, we will realloc.
-    size_t strings_capacity = ceil(ceil((in_length/(double)TOX_MAX_MESSAGE_LENGTH) + 1) * 1.5);
-
-    // overflow check
-    // shouldn't really happen, since TOX_MAX_MESSAGE_LENGTH > 1.5
-    if (in_length/(double)TOX_MAX_MESSAGE_LENGTH > strings_capacity) {
-        return false;
-    }
-
-    *out_strings = malloc(strings_capacity * sizeof(*out_strings));
-    if (!*out_strings) {
-        return false;
-    }
-
-    *out_lengths = malloc(strings_capacity * sizeof(*out_lengths));
-    if (!*out_lengths) {
-        free(*out_strings);
-        return false;
-    }
-
-    *out_count = 1;
     size_t offset = 0;
-    // keep slicing string while it's too big
+    // keep splitting string while it's too big
     while (in_length - offset > TOX_MAX_MESSAGE_LENGTH) {
         const size_t split_max_position = offset + TOX_MAX_MESSAGE_LENGTH - 1;
 
@@ -172,8 +107,6 @@ bool tsm_split_message(uint8_t *in_string, size_t in_length, uint8_t ***out_stri
 
         // shouldn't happen if the string is a valid UTF8 string
         if (!found_codepoint_split && !found_special_split) {
-            free(*out_strings);
-            free(*out_lengths);
             return false;
         }
 
@@ -182,33 +115,14 @@ bool tsm_split_message(uint8_t *in_string, size_t in_length, uint8_t ***out_stri
             split_position = codepoint_split_position;
         }
 
-        if (*out_count > strings_capacity) {
-            if (!insrease_capacity(&strings_capacity, out_strings, out_lengths) || (*out_count > strings_capacity)) {
-                free(*out_strings);
-                free(*out_lengths);
-                return false;
-            }
-        }
-
-        (*out_strings)[*out_count-1] = in_string + offset;
-        (*out_lengths)[*out_count-1] = split_position + 1 - offset;
+        callback(in_string + offset, split_position + 1 - offset, user_data);
 
         offset = split_position + 1;
-
-        (*out_count) ++;
     }
 
+    // see if there is a leftover string that is too small to be split
     if (in_length - offset > 0) {
-        if (*out_count > strings_capacity) {
-            if (!insrease_capacity(&strings_capacity, out_strings, out_lengths) || (*out_count > strings_capacity)) {
-                free(*out_strings);
-                free(*out_lengths);
-                return false;
-            }
-        }
-
-        (*out_strings)[*out_count-1] = in_string + offset;
-        (*out_lengths)[*out_count-1] = in_length - offset;
+        callback(in_string + offset, in_length - offset, user_data);
     }
 
     return true;

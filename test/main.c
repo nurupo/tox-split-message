@@ -16,11 +16,25 @@
     the License.
 */
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include <tox_split_message.h>
+
+void callback(const uint8_t *split_string, size_t length, void *user_data)
+{
+    (void) user_data;
+    assert(user_data == NULL);
+
+    uint8_t string[length + 1];
+    memcpy(string, split_string, length);
+    string[length] = '\0';
+
+    printf("length: %u\n", length);
+    printf("string: \"%s\"\n\n", string);
+}
 
 int main(void)
 {
@@ -68,33 +82,9 @@ int main(void)
 
     size_t in_length = sizeof(in_string);
 
-    uint8_t **out_strings;
-    size_t *out_lengths;
-    size_t out_count;
-
-    bool result = tsm_split_message(in_string, in_length, &out_strings, &out_lengths, &out_count);
+    bool result = tsm_split_message(in_string, in_length, callback, NULL);
 
     printf("result: %d\n", result);
 
-    if (!result) {
-        return 1;
-    }
-
-    for (size_t i = 0; i < out_count; i ++) {
-        printf("%u/%u\n", i+1, out_count);
-
-        printf("length: %u\n", out_lengths[i]);
-
-        uint8_t tmp = out_strings[i][out_lengths[i]];
-        out_strings[i][out_lengths[i]] = '\0';
-
-        printf("string: \"%s\"\n\n", out_strings[i]);
-
-        out_strings[i][out_lengths[i]] = tmp;
-    }
-
-    free(out_strings);
-    free(out_lengths);
-
-    return 0;
+    return result;
 }
