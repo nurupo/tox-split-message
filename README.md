@@ -8,24 +8,26 @@ It tries to split a UTF-8 encoded message on the nearest space or punctuation ch
 Usage example with no error handling.
 
 ```C
+#include <tox/tox.h>
 #include <tox_split_message.h>
+
+typedef struct Message_info {
+    Tox *tox;
+    uint32_t friend_number;
+} Message_info;
+
+void split_message_handler(const uint8_t *message, size_t length, void *user_data)
+{
+    Message_info *mi = user_data;
+    tox_friend_send_message(mi->tox, mi->friend_number, TOX_MESSAGE_TYPE_NORMAL,
+                            message, length, NULL);
+}
 
 void my_client_send_message(Tox *tox, uint32_t friend_number, uint8_t *message,
                             size_t length)
 {
-    uint8_t **messages;
-    size_t *lengths;
-    size_t count;
-
-    tsm_split_message(message, length, &messages, &lengths, &count);
-
-    for (size_t i = 0; i < count; i ++) {
-        tox_friend_send_message(tox, friend_number, TOX_MESSAGE_TYPE_NORMAL,
-                                messages[i], lengths[i], NULL);
-    }
-
-    free(messages);
-    free(lengths);
+    Message_info mi = {tox, friend_number};
+    tsm_split_message(message, length, split_message_handler, &mi);
 }
 ```
 
