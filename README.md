@@ -7,6 +7,8 @@ It tries to split a UTF-8 encoded message on the nearest space or punctuation ch
 
 Usage example with no error handling.
 
+Splits a message in messages of `TOX_MAX_MESSAGE_LENGTH` size, trying to split on space, dot, comma or dash if present in last 1/4 of the message, instead of splitting in the middle of a word.
+
 ```C
 #include <tox/tox.h>
 #include <tox_split_message.h>
@@ -27,7 +29,8 @@ void my_client_send_message(Tox *tox, uint32_t friend_number, uint8_t *message,
                             size_t length)
 {
     Message_info mi = {tox, friend_number};
-    tsm_split_message(message, length, split_message_handler, &mi);
+    tsm_split_message(message, length, TOX_MAX_MESSAGE_LENGTH, (uint8_t*)" .,-",
+                      TOX_MAX_FILENAME_LENGTH/4, split_message_handler, &mi);
 }
 ```
 
