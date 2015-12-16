@@ -26,18 +26,6 @@ set(INCLUDE_LIST ${INCLUDE_LIST} ${PROJECT_BINARY_DIR}/lib/tox_split_message_exp
 # make public headers globally available
 target_include_directories(${TARGET} PUBLIC ${CMAKE_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/lib)
 
-set(TOXCORE_INCLUDE_DIR_PATH "NONE" CACHE PATH "Path to toxcore include directory.")
-if (${TOXCORE_INCLUDE_DIR_PATH} STREQUAL "NONE")
-  find_path(FIND_TOXCORE_INCLUDE_DIR_PATH tox.h PATHS /usr/include/ /usr/local/include PATH_SUFFIXES tox)
-  if (FIND_TOXCORE_INCLUDE_DIR_PATH)
-    target_include_directories(${TARGET} PRIVATE ${FIND_TOXCORE_INCLUDE_DIR_PATH})
-  else()
-    message(FATAL_ERROR "Couldn't find include directory of tox.h file. Please specify it using TOXCORE_INCLUDE_DIR_PATH option.")
-  endif()
-else()
-  target_include_directories(${TARGET} PRIVATE ${TOXCORE_INCLUDE_DIR_PATH})
-endif()
-
 set_target_properties(${TARGET} PROPERTIES PUBLIC_HEADER "${INCLUDE_LIST}")
 
 INSTALL(TARGETS ${TARGET}

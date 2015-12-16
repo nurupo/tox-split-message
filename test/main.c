@@ -21,6 +21,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <tox.h>
+
 #include <tox_split_message.h>
 
 void callback(const uint8_t *split_string, size_t length, void *user_data)
@@ -38,51 +40,51 @@ void callback(const uint8_t *split_string, size_t length, void *user_data)
 
 int main(void)
 {
-    uint8_t in_string[] = "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting."
-                          "This is a very long string that requires some splitting.";
+    uint8_t string[] = "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting."
+                       "This is a very long string that requires some splitting.";
 
-    size_t in_length = sizeof(in_string);
+    size_t length = sizeof(string);
 
-    bool result = tsm_split_message(in_string, in_length, callback, NULL);
+    bool result = tsm_split_message(string, length-1, TOX_MAX_MESSAGE_LENGTH, (uint8_t*)" .,-", TOX_MAX_FILENAME_LENGTH/4, callback, NULL);
 
     printf("result: %d\n", result);
 
