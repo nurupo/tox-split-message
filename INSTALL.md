@@ -1,4 +1,4 @@
-##Installation
+## Installation
 - [Prerequisites](#prerequisites)
 - [CMake Options](#cmake-options)
 - [Linux](#linux)
@@ -7,13 +7,13 @@
   - [MSVC](#msvc)
 
 
-###Prerequisites
+### Prerequisites
 
   - CMake 2.8.11 or newer
   - [libtoxcore](https://github.com/irungentoo/toxcore) installed (just tox.h header file would do)
 
 
-###CMake Options
+### CMake Options
 
 Name | Description | Default
 ---|---|---
@@ -26,7 +26,7 @@ Name | Description | Default
 
 Note that options are cached in CMakeCache.txt. Delete CMakeCache.txt if you want to re-run cmake with different set of options.
 
-###Linux
+### Linux
 
 Navigate into the root directory of this repository and run:
 
@@ -37,9 +37,9 @@ make
 make install
 ```
 
-###Windows
+### Windows
 
-####MinGW
+#### MinGW
 
 Run `cmd.exe` and navigate into the root directory of this repository.
 
@@ -65,7 +65,7 @@ If everything goes successfully, you should have the "prefix" directory, the pla
 
 If something goes wrong, read the output of cmake or the compiler carefully and try to fix the problem.
 
-####MSVC
+#### MSVC
 
 Run `cmd.exe` and navigate into the root directory of this repository.
 
