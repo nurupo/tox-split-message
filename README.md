@@ -50,8 +50,5 @@ Alternatively, you could just drop the source code in your project, it's just 2 
 6. Push to the branch (`git push origin my-new-feature`).
 7. [Create new Pull Request](https://help.github.com/articles/using-pull-requests).
 
-## Contact
-Leave nurupo an email on the address he uses in commits or ping `nurupo` on `#tox-dev` at Freenode IRC ([Freenode Webchat](https://webchat.freenode.net/?channels=#tox-dev), [KiwiIRC](https://kiwiirc.com/client/chat.freenode.net/?theme=basic#tox-dev)).
-
 ## License
 This project is licensed under [Apache 2.0](LICENSE).
